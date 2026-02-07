@@ -1,33 +1,42 @@
 <!doctype html>
 <html lang="en">
-
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont,
-                "Segoe UI", Arial, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            overflow: hidden; /* щоб сердечки не створювали скрол */
+        }
+
+        .container {
+            text-align: center;
+            max-width: 90%;
+            position: relative;
+            z-index: 10;
         }
 
         img {
-            width: 300px;
+            width: 250px;
             height: auto;
-            margin-top: 150px;
+            margin-bottom: 20px;
         }
-
 
         button {
             -webkit-appearance: none;
             appearance: none;
-
             background: #e6e6e6;
             border: 1px solid #999;
-            border-radius: 0;
-
+            border-radius: 6px;
             color: #000;
-            font-size: 24px;
-            padding: 16px 32px;
+            font-size: 20px;
+            padding: 12px 24px;
             margin: 0 10px;
-
             font-family: inherit;
         }
 
@@ -35,79 +44,103 @@
             transform-origin: top center;
         }
 
+        .heart {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-image: url("minecraft-heart.png"); /* встав PNG сердечка */
+            background-size: cover;
+            animation: floatUp 6s linear forwards;
+        }
 
-        #ui {
-            transform: scale(1.5);
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
         }
     </style>
 </head>
-
 <body>
+    <div class="container">
+        <img id="gif" src="minion-minion-loves.gif" alt="photo"><br>
+        <div id="text">Will you be my valentine?</div><br>
+        <button id="left">Yes</button>
+        <button id="right">No</button>
+    </div>
 
-    <table id="ui" width="100%" height="100%">
-        <tr>
-            <td align="center" valign="middle">
-
-                <!-- GIF -->
-                <img id="gif" src="minion-minion-loves.gif" alt="photo"><br><br>
-
-                <!-- Text -->
-                <div id="text">Will you be my valentine?</div><br>
-
-                <!-- Buttons -->
-                <button id="left">Yes</button>
-                <button id="right">No</button>
-
-            </td>
-        </tr>
-    </table>
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+        Ваш браузер не підтримує аудіо.
+    </audio>
 
     <script>
         const left = document.getElementById("left");
         const right = document.getElementById("right");
         const gif = document.getElementById("gif");
         const text = document.getElementById("text");
+        const music = document.getElementById("bg-music");
 
         let clicks = 0;
 
         const scales = [
-            [1.6, 1.6],
-            [2.2, 2.4],
-            [3.0, 3.4],
-            [4.2, 5.4],
-            [6.7, 8.0]
+        [1.6, 1.6],
+        [2.2, 2.4],
+        [3.0, 3.4],
+        [4.2, 5.4],
+        [6.7, 8.0]
         ];
 
         const texts = [
-            "Are you sure?",
-            "Are you sure \nyou're sure?",
-            "You better say yes",
-            "Cmmon pleaseeee",
-            "Just press yes"
+        "Are you sure?",
+        "Are you sure \nyou're sure?",
+        "You better say yes",
+        "Cmmon pleaseeee",
+        "Just press yes"
         ];
 
         right.onclick = () => {
-            if (clicks < texts.length) {
-                right.innerText = texts[clicks];
-
-                const s = scales[clicks];
-                left.style.transform = "scale(" + s[0] + "," + s[1] + ")";
-                left.style.position = "relative";
-                left.style.zIndex = 9999;
-
-                clicks++;
-            }
+        if (clicks < texts.length) {
+        right.innerText = texts[clicks];
+        const s = scales[clicks];
+        left.style.transform = "scale(" + s[0] + "," + s[1] + ")";
+        left.style.position = "relative";
+        left.style.zIndex = 9999;
+        clicks++;
+        }
         };
 
         left.onclick = () => {
-            gif.src = "fireworks-exploding-heart.gif";
-            text.innerText = "YAAYYY!!!";
+        gif.src = "fireworks-exploding-heart.gif";
+        text.innerText = "YAAYYY!!!";
+        left.style.display = "none";
+        right.style.display = "none";
 
-            left.style.display = "none";
-            right.style.display = "none";
+        // Запуск музики
+        music.play();
+
+        // Зміна фону
+        document.body.style.background = "pink";
+
+        // Безкінечні сердечка
+        setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+        document.body.appendChild(heart);
+
+        // Видалення після анімації
+        setTimeout(() => {
+        heart.remove();
+        }, 6000);
+        }, 500); // кожні півсекунди нове сердечко
         };
     </script>
-
 </body>
-
 </html>
