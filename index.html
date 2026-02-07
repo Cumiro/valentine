@@ -27,19 +27,26 @@
             margin-bottom: 20px;
         }
 
+        /* контейнер для кнопок */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            position: relative;
+        }
+
         button {
             -webkit-appearance: none;
             appearance: none;
             border-radius: 6px;
             font-size: 20px;
             padding: 12px 24px;
-            margin: 0 10px;
             font-family: inherit;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        /* Приваблива кнопка Yes */
+        /* Yes */
         #left {
             --scale: 1;
             background: linear-gradient(45deg, #ff4da6, #ffccff);
@@ -53,7 +60,6 @@
 
             #left:hover {
                 transform: scale(calc(var(--scale) * 1.2)) rotate(-3deg);
-                box-shadow: 0 0 30px rgba(255, 77, 166, 1), 0 0 60px rgba(255, 204, 255, 0.9);
             }
 
         @keyframes pulse {
@@ -70,13 +76,14 @@
             }
         }
 
-        /* «Так собі» кнопка No */
+        /* No */
         #right {
             background: #e6e6e6;
             border: 1px solid #999;
             color: #555;
             opacity: 0.6;
-            transition: opacity 0.8s ease;
+            position: relative;
+            transition: transform 0.4s ease, opacity 0.8s ease;
         }
 
             #right.fade-out {
@@ -106,16 +113,19 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         <img id="gif" src="minion-minion-loves.gif" alt="photo"><br>
         <div id="text">Will you be my valentine?</div><br>
-        <button id="left">Yes 💖</button>
-        <button id="right">No</button>
+
+        <div class="buttons">
+            <button id="left">Yes 💖</button>
+            <button id="right">No</button>
+        </div>
     </div>
 
     <audio id="bg-music" loop>
         <source src="song.mp3" type="audio/mpeg">
-        Ваш браузер не підтримує аудіо.
     </audio>
 
     <script>
@@ -129,22 +139,28 @@
 
         const texts = [
         "Are you sure?",
-        "Are you sure \nyou're sure?",
+        "Are you sure you're sure?",
         "You better say yes",
-        "Cmmon pleaseeee",
+        "Cmon pleaseeee",
         "Just press yes"
         ];
 
         right.onclick = () => {
         if (clicks < texts.length) {
         right.innerText = texts[clicks];
+
+        // Yes росте
         left.style.setProperty("--scale", 1.5 + clicks * 0.5);
+
+        // No тікає
+        right.style.transform =
+        `translate(${20 + clicks * 25}px, ${clicks * 15}px)`;
+
         clicks++;
 
-        // якщо це останнє натискання — плавно зникає кнопка No
         if (clicks === texts.length) {
         right.classList.add("fade-out");
-        setTimeout(() => right.remove(), 800); // видаляємо після анімації
+        setTimeout(() => right.remove(), 800);
         }
         }
         };
@@ -152,16 +168,11 @@
         left.onclick = () => {
         gif.src = "fireworks-exploding-heart.gif";
         text.innerText = "YAAYYY!!!";
-        left.style.display = "none";
-        right.style.display = "none";
+        document.querySelector(".buttons").remove();
 
-        // Запуск музики
         music.play();
-
-        // Зміна фону
         document.body.style.background = "pink";
 
-        // Безкінечні сердечка
         setInterval(() => {
         const heart = document.createElement("div");
         heart.classList.add("heart");
@@ -169,11 +180,10 @@
         heart.style.animationDuration = (3 + Math.random() * 3) + "s";
         document.body.appendChild(heart);
 
-        setTimeout(() => {
-        heart.remove();
-        }, 6000);
+        setTimeout(() => heart.remove(), 6000);
         }, 500);
         };
     </script>
+
 </body>
 </html>
