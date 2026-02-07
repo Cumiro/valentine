@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,19 +30,58 @@
         button {
             -webkit-appearance: none;
             appearance: none;
-            background: #e6e6e6;
-            border: 1px solid #999;
             border-radius: 6px;
-            color: #000;
             font-size: 20px;
             padding: 12px 24px;
             margin: 0 10px;
             font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
+        /* Приваблива кнопка Yes */
         #left {
-            transform-origin: top center;
+            --scale: 1;
+            background: linear-gradient(45deg, #ff4da6, #ffccff);
+            border: none;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 77, 166, 0.8), 0 0 40px rgba(255, 204, 255, 0.6);
+            animation: pulse 1.5s infinite;
+            transform: scale(var(--scale));
         }
+
+            #left:hover {
+                transform: scale(calc(var(--scale) * 1.2)) rotate(-3deg);
+                box-shadow: 0 0 30px rgba(255, 77, 166, 1), 0 0 60px rgba(255, 204, 255, 0.9);
+            }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(calc(var(--scale) * 1));
+            }
+
+            50% {
+                transform: scale(calc(var(--scale) * 1.1));
+            }
+
+            100% {
+                transform: scale(calc(var(--scale) * 1));
+            }
+        }
+
+        /* «Так собі» кнопка No */
+        #right {
+            background: #e6e6e6;
+            border: 1px solid #999;
+            color: #555;
+            opacity: 0.6;
+            transition: opacity 0.8s ease;
+        }
+
+            #right.fade-out {
+                opacity: 0;
+            }
 
         .heart {
             position: absolute;
@@ -70,13 +109,13 @@
     <div class="container">
         <img id="gif" src="minion-minion-loves.gif" alt="photo"><br>
         <div id="text">Will you be my valentine?</div><br>
-        <button id="left">Yes</button>
+        <button id="left">Yes 💖</button>
         <button id="right">No</button>
     </div>
 
     <audio id="bg-music" loop>
         <source src="song.mp3" type="audio/mpeg">
-        ��� ������� �� ������� ����.
+        Ваш браузер не підтримує аудіо.
     </audio>
 
     <script>
@@ -87,14 +126,6 @@
         const music = document.getElementById("bg-music");
 
         let clicks = 0;
-
-        const scales = [
-        [1.6, 1.6],
-        [2.2, 2.4],
-        [3.0, 3.4],
-        [4.2, 5.4],
-        [6.7, 8.0]
-        ];
 
         const texts = [
         "Are you sure?",
@@ -107,11 +138,14 @@
         right.onclick = () => {
         if (clicks < texts.length) {
         right.innerText = texts[clicks];
-        const s = scales[clicks];
-        left.style.transform = "scale(" + s[0] + "," + s[1] + ")";
-        left.style.position = "relative";
-        left.style.zIndex = 9999;
+        left.style.setProperty("--scale", 1.5 + clicks * 0.5);
         clicks++;
+
+        // якщо це останнє натискання — плавно зникає кнопка No
+        if (clicks === texts.length) {
+        right.classList.add("fade-out");
+        setTimeout(() => right.remove(), 800); // видаляємо після анімації
+        }
         }
         };
 
@@ -121,10 +155,13 @@
         left.style.display = "none";
         right.style.display = "none";
 
+        // Запуск музики
         music.play();
 
+        // Зміна фону
         document.body.style.background = "pink";
 
+        // Безкінечні сердечка
         setInterval(() => {
         const heart = document.createElement("div");
         heart.classList.add("heart");
